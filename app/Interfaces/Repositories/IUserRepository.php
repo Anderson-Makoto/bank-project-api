@@ -15,4 +15,6 @@ interface IUserRepository
     public function deleteUserToken($id);
 
     public function getUserById($id);
+
+    public function getUserBalance();
 }

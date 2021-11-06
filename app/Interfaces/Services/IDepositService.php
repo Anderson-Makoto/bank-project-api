@@ -2,7 +2,6 @@
 
 namespace App\Interfaces\Services;
 
-use App\Models\Deposit;
 use Illuminate\Http\Request;
 
 interface IDepositService
@@ -14,4 +13,6 @@ interface IDepositService
     public function getCustomersPendingDeposits();
 
     public function getPendingDepositDetails($depositId, $customerId);
+
+    public function changeDepositStatus($depositId, $status, $customerId);
 }

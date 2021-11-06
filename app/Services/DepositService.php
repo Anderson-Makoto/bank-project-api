@@ -73,13 +73,6 @@ class DepositService implements IDepositService
         }
     }
 
-    // private function getCustomerDetails($customerId)
-    // {
-    //     $user = $this->userRepository->getUserById($customerId);
-
-    //     return $user
-    // }
-
     private function getImageAsBase64($depositData)
     {
         try {
@@ -90,6 +83,16 @@ class DepositService implements IDepositService
             return $depositData;
         } catch (Exception $e) {
             throw new Exception("Could not convert image in base64 format", 500);
+        }
+    }
+
+    public function changeDepositStatus($depositId, $status, $customerId)
+    {
+        try {
+            $deposit = $this->depositRepository->updateDepositStatus($depositId, $status, $customerId);
+            return $deposit;
+        } catch (Exception $e) {
+            throw new MainException("Could not change deposit status", $e->getCode(), $e->getMessage());
         }
     }
 }

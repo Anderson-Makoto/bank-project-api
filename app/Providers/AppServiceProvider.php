@@ -32,6 +32,16 @@ class AppServiceProvider extends ServiceProvider
             'App\Interfaces\Repositories\IDepositRepository',
             'App\Repositories\DepositRepository'
         );
+
+        $this->app->bind(
+            'App\Interfaces\Services\IPurchaseService',
+            'App\Services\PurchaseService'
+        );
+
+        $this->app->bind(
+            'App\Interfaces\Repositories\IPurchaseRepository',
+            'App\Repositories\PurchaseRepository'
+        );
     }
 
     /**

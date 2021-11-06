@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\DepositController;
+use App\Http\Controllers\Api\PurchaseController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Middleware\IsCustomer;
 use Illuminate\Support\Facades\Route;
@@ -26,4 +27,6 @@ route::middleware(["auth:sanctum"])->group(function () {
     Route::post("deposit/getUserDepositsByStatusAndByMonth", [DepositController::class, "getUserDepositsByStatusAndByMonth"])->middleware("isCustomer");
     Route::get("deposit/getPendingDeposits", [DepositController::class, "getCustomersPendingDeposits"])->middleware("isAdmin");
     Route::get("deposit/getDepositDetailsbyId/{depositId}/{customerId}", [DepositController::class, "getPendingDepositDetails"])->middleware("isAdmin");
+    Route::get("deposit/changeDepositStatus/{depositId}/{status}/{customerId}", [DepositController::class, "changeDepositStatus"])->middleware("isAdmin");
+    Route::post("purchase/save", [PurchaseController::class, "store"])->middleware("isCustomer");
 });

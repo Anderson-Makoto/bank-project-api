@@ -9,14 +9,16 @@ class Purchase extends Model
 {
     use HasFactory;
 
-    protected $table = "user";
+    protected $table = "purchase";
 
     protected $fillable = [
-        "user_fk",
+        "fk_user",
         "description",
         "value",
         "purchase_date"
     ];
+
+    public $timestamps = false;
 
     public function user()
     {
