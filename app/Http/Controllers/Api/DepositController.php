@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DepositPendingRequest;
 use App\Http\Requests\GetUserDepositsByStatusRequest;
 use App\Interfaces\Services\IDepositService;
+use Exception;
 use Illuminate\Http\Request;
 
 class DepositController extends Controller
@@ -75,6 +76,19 @@ class DepositController extends Controller
             return response()->json([
                 "data" => $depositAndCustomerData
             ]);
+        } catch (MainException $e) {
+            return $e->errorResponse();
+        }
+    }
+
+    public function changeDepositStatus($depositId, $status, $customerId)
+    {
+        try {
+            $deposit = $this->depositService->changeDepositStatus($depositId, $status, $customerId);
+
+            return response()->json([
+                "data" => $deposit
+            ], 200);
         } catch (MainException $e) {
             return $e->errorResponse();
         }

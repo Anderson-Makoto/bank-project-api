@@ -13,4 +13,8 @@ interface IDepositRepository
     public function getAllPendingDeposits();
 
     public function getDepositById($id);
+
+    public function getDepositsSumWhereStatusIsApproved();
+
+    public function updateDepositStatus($depositId, $status, $customerId);
 }

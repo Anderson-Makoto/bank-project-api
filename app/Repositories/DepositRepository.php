@@ -90,4 +90,31 @@ class DepositRepository implements IDepositRepository
             throw new SQLException("Could not retrieve deposit details", 500);
         }
     }
+
+    public function getDepositsSumWhereStatusIsApproved()
+    {
+        try {
+            $id = auth()->user()->id;
+            $totalDeposits = Deposit::where("fk_user", $id)
+                ->where("fk_deposit_status", 2)
+                ->sum("value");
+
+            return $totalDeposits;
+        } catch (Exception $e) {
+            throw new SQLException("Could not get sum of approved deposits from database", 500);
+        }
+    }
+
+    public function updateDepositStatus($depositId, $status, $customerId)
+    {
+        try {
+            $deposit = Deposit::where("fk_user", $customerId)
+                ->where("id", $depositId)
+                ->update(["fk_deposit_status" => $status]);
+
+            return $deposit;
+        } catch (Exception $e) {
+            throw new SQLException("Couldn't update deposit status in database", 500);
+        }
+    }
 }

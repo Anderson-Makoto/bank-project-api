@@ -5,6 +5,8 @@ namespace App\Repositories;
 use App\Exceptions\SQLException;
 use App\Exceptions\UnauthorizedRequest;
 use App\Interfaces\Repositories\IUserRepository;
+use App\Models\Deposit;
+use App\Models\Purchase;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Hash;
@@ -99,6 +101,24 @@ class UserRepository implements IUserRepository
             return $user;
         } catch (Exception $e) {
             throw new Exception("Could not retrieve user", 500);
+        }
+    }
+
+    public function getUserBalance()
+    {
+        $id = auth()->user()->id;
+
+        try {
+            $totalDeposits = Deposit::where("fk_user", $id)
+                ->where("fk_deposit_status", 2)
+                ->sum("value");
+
+            $totalPurchases = Purchase::where("fk_user", $id)
+                ->sum("value");
+
+            return $totalDeposits - $totalPurchases;
+        } catch (Exception $e) {
+            throw new SQLException("Could not get sum of deposits and sum of purchases from database", 500);
         }
     }
 }
