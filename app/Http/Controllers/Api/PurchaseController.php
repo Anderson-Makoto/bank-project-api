@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Exceptions\MainException;
-use App\Models\Purchase;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SavePurchaseRequest;
-use Illuminate\Http\Request;
 use App\Interfaces\Services\IPurchaseService;
 
 
@@ -28,6 +26,19 @@ class PurchaseController extends Controller
             return response()->json([
                 "data" => $purchase
             ], 201);
+        } catch (MainException $e) {
+            return $e->errorResponse();
+        }
+    }
+
+    public function getAllPurchasesByMonth($month, $year)
+    {
+        try {
+            $purchases = $this->purchaseService->getAllPurchasesByMonth($month, $year);
+
+            return response()->json([
+                "data" => $purchases
+            ], 200);
         } catch (MainException $e) {
             return $e->errorResponse();
         }

@@ -7,8 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DepositPendingRequest;
 use App\Http\Requests\GetUserDepositsByStatusRequest;
 use App\Interfaces\Services\IDepositService;
-use Exception;
-use Illuminate\Http\Request;
 
 class DepositController extends Controller
 {
