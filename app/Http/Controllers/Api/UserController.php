@@ -63,4 +63,17 @@ class UserController extends Controller
             return $e->errorResponse();
         }
     }
+
+    public function getUserBalance()
+    {
+        try {
+            $balance = $this->userService->getUserBalance();
+
+            return response()->json([
+                "data" => $balance
+            ], 200);
+        } catch (MainException $e) {
+            return $e->errorResponse();
+        }
+    }
 }

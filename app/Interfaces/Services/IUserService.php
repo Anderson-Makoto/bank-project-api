@@ -11,4 +11,6 @@ interface IUserService
     public function loginUser(Request $request);
 
     public function logoutUser($id);
+
+    public function getUserBalance();
 }

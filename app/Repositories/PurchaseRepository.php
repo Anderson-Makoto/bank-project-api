@@ -25,4 +25,29 @@ class PurchaseRepository implements IPurchaseRepository
             throw new SQLException($e->getMessage() . "Couldn't save purchase", 500);
         }
     }
+
+    public function getAllUserPurchasesByMonth($month, $year)
+    {
+        try {
+            $id = auth()->user()->id;
+
+            $purchasesList = Purchase::where("fk_user", $id)
+                ->whereMonth("purchase_date", $month)
+                ->whereYear("purchase_date", $year)
+                ->orderBy("purchase_date", "desc")
+                ->get();
+
+            $sumPurchases = Purchase::where("fk_user", $id)
+                ->whereMonth("purchase_date", $month)
+                ->whereYear("purchase_date", $year)
+                ->sum("value");
+
+            return [
+                "purchasesList" => $purchasesList,
+                "sumPurchases" => $sumPurchases
+            ];
+        } catch (Exception $e) {
+            throw new SQLException("Couldn't get all purchases of user from database", 500);
+        }
+    }
 }

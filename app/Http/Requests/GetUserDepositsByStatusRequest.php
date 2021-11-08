@@ -39,7 +39,6 @@ class GetUserDepositsByStatusRequest extends FormRequest
             "deposit_status_fk" => "required|integer",
             "year" => "required|int|regex:/^\d{4}$/",
             "month" => "required|int|min:1|max:12"
-            // |regex:/^(0)(1-9){1}|(10|11|12)
         ];
     }
 }
