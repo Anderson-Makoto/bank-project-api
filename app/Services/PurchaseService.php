@@ -38,4 +38,15 @@ class PurchaseService implements IPurchaseService
         if ($currentBalance < (float)($request->input("value")))
             throw new Exception("Not enough balance in account", 400);
     }
+
+    public function getAllPurchasesByMonth($month, $year)
+    {
+        try {
+            $purchases = $this->purchaseRepository->getAllUserPurchasesByMonth($month, $year);
+
+            return $purchases;
+        } catch (Exception $e) {
+            throw new MainException("Couldn't get all user purchases", $e->getCode(), $e->getMessage());
+        }
+    }
 }

@@ -74,4 +74,15 @@ class UserService implements IUserService
             throw new MainException("Could not logout user", $e->getCode(), $e->getMessage());
         }
     }
+
+    public function getUserBalance()
+    {
+        try {
+            $userBalance = $this->userRepository->getUserBalance();
+
+            return $userBalance;
+        } catch (Exception $e) {
+            throw new MainException("Could not get user balance", $e->getCode(), $e->getMessage());
+        }
+    }
 }

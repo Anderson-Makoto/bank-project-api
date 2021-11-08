@@ -7,4 +7,6 @@ use Illuminate\Http\Request;
 interface IPurchaseService
 {
     public function savePurchase(Request $request);
+
+    public function getAllPurchasesByMonth($month, $year);
 }
