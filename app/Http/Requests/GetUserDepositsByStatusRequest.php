@@ -20,7 +20,7 @@ class GetUserDepositsByStatusRequest extends FormRequest
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
     {
         $response = new JsonResponse([
-            'message' => 'The given data is invalid',
+            'description' => 'The given data is invalid',
             'errors' => $validator->errors()
         ], 400);
 
@@ -36,7 +36,7 @@ class GetUserDepositsByStatusRequest extends FormRequest
     {
         return [
             "user_fk" => "required|integer",
-            "deposit_status_fk" => "required|integer",
+            "deposit_status_fk" => "required|array",
             "year" => "required|int|regex:/^\d{4}$/",
             "month" => "required|int|min:1|max:12"
         ];
