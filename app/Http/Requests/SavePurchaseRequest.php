@@ -20,12 +20,13 @@ class SavePurchaseRequest extends FormRequest
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
     {
         $response = new JsonResponse([
-            'message' => 'The given data is invalid',
+            'description' => 'The given data is invalid',
             'errors' => $validator->errors()
         ], 400);
 
         throw new \Illuminate\Validation\ValidationException($validator, $response);
     }
+
 
     /**
      * Get the validation rules that apply to the request.

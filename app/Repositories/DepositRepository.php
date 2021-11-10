@@ -49,12 +49,12 @@ class DepositRepository implements IDepositRepository
         $month = (int)($request->input("month"));
         $year = (int)($request->input("year"));
         $fkUser = (int)($request->input("user_fk"));
-        $fkDepositStatus = (int)($request->input("deposit_status_fk"));
+        $fkDepositStatus = $request->input("deposit_status_fk");
 
         try {
-            $deposits = Deposit::select(["id", "description", "updated_at", "value"])
+            $deposits = Deposit::select(["id", "description", "updated_at", "value", "fk_deposit_status"])
                 ->where("fk_user", $fkUser)
-                ->where("fk_deposit_status", $fkDepositStatus)
+                ->whereIn("fk_deposit_status", $fkDepositStatus)
                 ->whereYear("updated_at", $year)
                 ->whereMonth("updated_at", $month)
                 ->orderBy("updated_at", "asc")
@@ -69,8 +69,18 @@ class DepositRepository implements IDepositRepository
     public function getAllPendingDeposits()
     {
         try {
-            $deposits = Deposit::select("id", "description", "updated_at", "value")
+            $deposits = Deposit::select(
+                "deposit.id AS id",
+                "deposit.description AS description",
+                "deposit.updated_at AS updated_at",
+                "deposit.value AS value",
+                "deposit.fk_deposit_status AS fk_deposit_status",
+                "user.name AS username",
+                "user.email AS email",
+                "user.id AS account"
+            )
                 ->where("fk_deposit_status", 1)
+                ->join("user", "user.id", "=", "deposit.fk_user")
                 ->orderBy("updated_at", "ASC")
                 ->get();
 

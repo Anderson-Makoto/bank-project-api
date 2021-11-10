@@ -3,79 +3,60 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Filesystem\Filesystem;
 
 class DepositCreateTest extends TestCase
 {
-    private $customerToken = "";
-    private $adminToken = "";
+    use RefreshDatabase;
+    private $populatedData;
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->artisan("migrate");
-        $this->artisan("db:seed");
-        $this->artisan('db:seed', ['--class' => 'PopulateTestDb']);
+        Storage::fake("public/img/checks");
 
-        $this->simulateUserLogged();
+        $this->populatedData = $this->populateDb();
     }
 
-    private function simulateUserLogged()
+    public function tearDown(): void
     {
-        $loginData = [
-            "email" => "first@test.com",
-            "password" => "123456"
-        ];
-
-        $loginUser = $this->post("api/user/login", $loginData);
-
-        $this->customerToken = "Bearer " . $loginUser->decodeResponseJson()["data"]["token"];
-
-        $loginData = [
-            "email" => "admin@email.com",
-            "password" => "123123"
-        ];
-
-        $loginUser = $this->post("api/user/login", $loginData);
-
-        $this->adminToken = "Bearer " . $loginUser->decodeResponseJson()["data"]["token"];
+        parent::tearDown();
+        (new Filesystem)->cleanDirectory('public/img/checks');
     }
 
     /** @test */
     public function verify_if_save_deposit_pending_correctly()
     {
-        Storage::fake("img/checks");
         $file = UploadedFile::fake()->image('check.png', 20, 20);
 
         $data = [
-            "user_fk" => 3,
+            "user_fk" => $this->populatedData["users"]["customer"]["data"]["id"],
             "description" => "check description",
             "value" => 100.75,
             "image" => $file
         ];
 
+
         $header = [
             "HTTP_ACCEPT" => "application/ld+json",
-            "HTTP_AUTHORIZATION" => $this->customerToken
+            "HTTP_AUTHORIZATION" => $this->populatedData["users"]["customer"]["token"]
         ];
 
         $response = $this->post("api/deposit/save", $data, $header);
 
-        $response->assertJsonFragment(["fk_deposit_status" => 1]);
+        $response->assertSuccessful();
     }
 
     /** @test */
     public function verify_if_send_error_when_not_customer()
     {
-        Storage::fake("img/checks");
         $file = UploadedFile::fake()->image('check.png', 20, 20);
 
         $data = [
-            "user_fk" => 3,
+            "user_fk" => $this->populatedData["users"]["customer"]["data"]["id"],
             "description" => "check description",
             "value" => 100.75,
             "image" => $file
@@ -83,7 +64,7 @@ class DepositCreateTest extends TestCase
 
         $header = [
             "HTTP_ACCEPT" => "application/ld+json",
-            "HTTP_AUTHORIZATION" => $this->adminToken
+            "HTTP_AUTHORIZATION" => $this->populatedData["users"]["admin"]["token"]
         ];
 
         $response = $this->post("api/deposit/save", $data, $header);
@@ -94,10 +75,8 @@ class DepositCreateTest extends TestCase
     /** @test */
     public function verify_if_send_error_if_file_is_not_image()
     {
-        Storage::fake("img/checks");
-
         $data = [
-            "user_fk" => 3,
+            "user_fk" => $this->populatedData["users"]["customer"]["data"]["id"],
             "description" => "check description",
             "value" => 100.75,
             "image" => "not image file"
@@ -105,11 +84,24 @@ class DepositCreateTest extends TestCase
 
         $header = [
             "HTTP_ACCEPT" => "application/ld+json",
-            "HTTP_AUTHORIZATION" => $this->customerToken
+            "HTTP_AUTHORIZATION" => $this->populatedData["users"]["customer"]["token"]
         ];
 
         $response = $this->post("api/deposit/save", $data, $header);
 
         $response->assertJsonFragment([0 => "The image must be an image."]);
+    }
+
+    /** @test */
+    public function verify_if_admin_can_change_deposits_status()
+    {
+        $header = [
+            "HTTP_ACCEPT" => "application/ld+json",
+            "HTTP_AUTHORIZATION" => $this->populatedData["users"]["admin"]["token"]
+        ];
+
+        $response = $this->get("api/deposit/changeDepositStatus/1/2/2", $header);
+
+        $response->assertSuccessful();
     }
 }
