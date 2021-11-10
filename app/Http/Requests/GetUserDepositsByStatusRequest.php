@@ -27,6 +27,7 @@ class GetUserDepositsByStatusRequest extends FormRequest
         throw new \Illuminate\Validation\ValidationException($validator, $response);
     }
 
+
     /**
      * Get the validation rules that apply to the request.
      *

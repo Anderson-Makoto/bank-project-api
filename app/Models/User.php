@@ -27,4 +27,14 @@ class User extends Model
     ];
 
     public $timestamps = false;
+
+    public function deposit()
+    {
+        $this->hasMany(Deposit::class);
+    }
+
+    public function purchase()
+    {
+        $this->hasMany(Purchase::class);
+    }
 }
